@@ -1,0 +1,14 @@
+Data sets usable to write tests
+ - normal: The normal case, everything works
+ - compatlevel: Almost like the normal case but involving compat updates
+ - kvz: The archive files are broken
+     - Update1.kvz and Update2.kvz are truncated
+     - Update3.kvz is some random garbage
+ - packages: The Packages.xml file is not valid
+ - sourcedown: The referenced update source doesn't exist (simulates server unreachable)
+ - updateinstructions: The UpdateInstructions.xml uses some unknown commands
+     - Update1.kvz has a Copy command with a missing arg
+     - Update2.kvz has invalid XML
+     - Update3.kvz refers to a file which is not in the archive
+ - updates: The Updates.xml file is not valid
+ - updatesources: The UpdateSources.xml file is not valid XML

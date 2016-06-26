@@ -1,0 +1,12 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/.__kdab__/kdtools/macwidgets">
+        <file alias="searchlineedit_magnifier_win.png">resources/searchlineedit_magnifier_win.png</file>
+        <file alias="searchlineedit_magnifier_win_arrow.png">resources/searchlineedit_magnifier_win_arrow.png</file>
+
+        <file alias="lockbutton_lock_locked">resources/lockbutton_lock_locked.png</file>
+        <file alias="lockbutton_lock_unlocked">resources/lockbutton_lock_unlocked.png</file>
+        
+        <file alias="toolbutton_options.png">resources/toolbutton_options.png</file>
+    </qresource>
+</RCC>

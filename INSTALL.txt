@@ -1,0 +1,102 @@
+This describes how to compile KD Tools from source on Unix:
+
+1) Configure the library
+   
+   Make sure, that the qmake executable can be found in the path. Otherwise,
+   set QTDIR by doing:
+   export QTDIR=/path/to/qt
+
+   Run the configure script:
+   ./configure.sh
+
+   If you want KD Tools installed in a non-default localtion, add:
+   -prefix /path/to/kdtools (defaults to /usr/local/KDAB/KDTools-<version>)
+
+   To install the plugins in a non-default location, add:
+   -plugins-prefix /path/to/plugins (defaults to $QTDIR/plugins)
+
+   If you want your library to contain debug symbols, add:
+   -debug
+
+   To compile KD Tools as static library, add:
+   -static
+
+   Other options can be seen with ./configure.sh -h
+
+2) Setup LD_LIBRARY_PATH to point to the lib directory.
+   LD_LIBRARY_PATH=/path/to/kdtools/lib:$LD_LIBRARY_PATH
+
+   If you do not have LD_LIBRARY_PATH set already then use this line instead:
+   LD_LIBRARY_PATH=/path/to/kdtools/lib
+   export LD_LIBRARY_PATH
+
+   Setup QMAKEFEATURES to point to the KD Tools features file:
+   QMAKEFEATURES=/path/to/kdtools/mkspecs/features:$QMAKEFEATURES
+
+   If you do not have QMAKEFEATURES set already then use this line instead:
+   QMAKEFEATURES=/path/to/kdtools/mkspecs/features
+   export QMAKEFEATURES
+
+   The above goes into your .bashrc or similar.
+   
+   Note: On Mac, you have to set DYLD_LIBRARY_PATH instead of LD_LIBRARY_PATH
+
+3) Next compile everything by typing:
+  make
+  make install
+ 
+4) In the directory examples, you will find some example programs showing the content of this package.
+
+5) In the directory "doc" you will find a manual and a reference manual as HTML
+
+6) If you want to be able to
+
+-------------------------------------------------------------------------------
+
+This describes how to compile KD Tools from source on Windows:
+
+1) Configure the library
+   
+   Make sure, that the qmake executable can be found in the path. Otherwise,
+   set QTDIR by doing:
+   set QTDIR=C:\path\to\qt
+
+   Run the configure script:
+   configure.bat
+
+   If you want KD Tools installed in a non-default localtion, add:
+   -prefix C:\path\to\kdtools (defaults to C:\KDTools-<version>)
+
+   To install the plugins in a non-default location, add:
+   -plugins-prefix C:\path\to\plugins (defaults to $QTDIR\plugins)
+
+   If you want your library to contain debug symbols, add:
+   -debug
+
+   To compile KD Tools as static library, add:
+   -static
+
+   Other options can be seen with configure.bat -h
+
+2) Setup PATH to point to the lib directory.
+   set PATH=C:\path\to\kdtools\lib;%PATH%
+
+   If you do not have LD_LIBRARY_PATH set already then use this line instead:
+   set PATH=C:\path\to\kdtools\lib
+
+   Setup QMAKEFEATURES to point to the KD Tools features file:
+   set QMAKEFEATURES=C:\path\to\kdtools\mkspecs\features;$QMAKEFEATURES
+
+   If you do not have QMAKEFEATURES set already then use this line instead:
+   set QMAKEFEATURES=C:\path\to\kdtools\mkspecs\features
+
+   The above goes into your system settings or similar.
+   
+3) Next compile everything by typing:
+  make (or nmake, on MSVC++)
+  make install (or nmake install, onn MSVC++)
+
+4) In the directory examples, you will find some example programs showing the content of this package.
+
+5) In the directory "doc" you will find a manual and a reference manual as HTML
+

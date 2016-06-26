@@ -1,0 +1,9 @@
+KDLogger
+=================
+- KDLogger has been renamed to KDLog
+- to redirect qMessages, call KDLog::setQDebugMessagesRedirected(true)
+
+KDSignalLogDevice
+=================
+- logInfo, logDebug, logWarning, logError have been renamed info, debug,
+  warning, error, resp.

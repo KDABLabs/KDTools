@@ -1,0 +1,248 @@
+// -*- mode:c++ -*-
+/*!
+  \page kdupdaterdemo KDUpdater - A simple demo
+  \brief A simple example how to use KDUpdater to update an application.
+
+  This section deals with the integration of \ref KDUpdater in an application
+  which shall update itself.
+
+  \li \subpage kdupdaterdemo_updater_code_usage - How to use KDUpdater to
+  write an updateable application.
+  \li \subpage kdupdaterdemo_updater_setup Package Setup -
+  How to setup a packagefile for an application using KDUpdater
+  \li \subpage kdupdaterdemo_updater_repository_setup Repository Setup -
+  How to setup an repository for an application using KDUpdater
+*/
+/*!
+
+\page kdupdaterdemo_updater_code_usage Implementation
+\brief A short explanation how to integrate \ref KDUpdater in a
+application.
+
+\section kdupdaterdemo_updater_code_usage_getstarted Basic information
+
+An application using KDUpdater always has an \ref KDUpdater::Target. This is the
+core class which contains all necessary information. If not explicitly set,
+it gains all base informations from QCoreApplication, like working directory, etc.
+The current version of all installed packages is tracked via an xml file.
+The path to it is set with \ref KDUpdater::Target::setPackagesXMLFileName.
+For an explanation of the file format look in \ref kdupdater_packagexml_fileformat.
+Assumed you have already set up an update repository like explained in
+\ref kdupdaterdemo_updater_repository_setup the following section describes
+the needed code.
+
+
+
+\section kdupdaterdemo_init Getting started
+
+As mentioned before an \ref KDUpdater::Target is created and ininitalized it with
+the packagetracking file by calling \ref KDUpdater::Target::setPackagesXMLFileName.
+So the needed code looks like this:
+
+\verbatim
+#include<KDUpdater/Target>
+
+//init
+KDUpdater::Target application;
+application.setPackageXMLFilename( "packages.xml" );
+\endverbatim
+
+\section kdupdaterdemo_updateSearch How to search for updates
+
+Searching for updates is also an easy task, which is done
+by telling the \ref KDUpdater::Target the repository url
+and the name of the application updates are searched for with
+\ref KDUpdater::Target::addUpdateSource. Next an \ref KDUpdater::UpdateFinder
+is created and told what kind of packages he should look for, new Packages,
+just updates or both. As this tutorial describes how to update your application
+we just look for updates using KDUpdater::UpdateFinder::setUpdateType.
+The last step is calling \ref KDUpdater::UpdateFinder::run() and retrieve the
+list of applicable updates via \ref KDUpdater::UpdateFinder::updates.
+
+\verbatim
+#include<KDUpdater/Target>
+#include<KDUpdater/UpdateFinder>
+
+//init
+KDUpdater::Target application;
+application.setPackageXMLFilename( "packages.xml" );
+
+//search for updates
+application.addUpdateSource( getAppName(), getAppName(), QString(), QUrl::fromLocalFile( m_repository ) , 1 );
+// this call avoids that the aquired updateSourceInfo is written to a file.
+application.updateSourcesInfo().setModified( false );
+KDUpdater::UpdateFinder finder( &application );
+finder.setUpdateType( KDUpdater::PackageUpdate );
+finder.run();
+const QList< KDUpdater::Update* > foundUpdates = finder.updates();
+
+\endverbatim
+
+\section kdupaterdemo_installupdates How to install updates
+
+Since the repository should only contain an update for our application
+this demo does not  filter the list of updates.
+To install a list of update we use the \ref KDUpdater::UpdateInstaller::setUpdatesToInstall.
+and call \ref KDUpdater::UpdateInstaller::run. Errors can be detected via \ref KDUpdater::UpdateInstaller::error.
+
+\verbatim
+#include<KDUpdater/Target>
+#include<KDUpdater/UpdateFinder>
+
+//init
+KDUpdater::Target application;
+application.setPackageXMLFilename( "packages.xml" );
+
+//search for updates
+application.addUpdateSource( getAppName(), getAppName(), QString(), QUrl::fromLocalFile( m_repository ) , 1 );
+// this call avoids that the aquired updateSourceInfo is written to a file.
+application.updateSourcesInfo().setModified( false );
+KDUpdater::UpdateFinder finder( &application );
+finder.setUpdateType( KDUpdater::PackageUpdate );
+finder.run();
+const QList< KDUpdater::Update* > foundUpdates = finder.updates();
+
+//install updates
+KDUpdater::UpdateInstaller installer( &application );
+installer.setUpdatesToInstall( foundUpdates );
+installer.run();
+if ( installer.error != 0 )
+	errorhandling();
+else
+	mayberestart();
+\endverbatim
+
+\section kdupdaterdemo_selfupdate Special Case - updateing yourself
+This is no difficult problem on operating systems where you can overwrite
+open files. However on a platform like Microsoft Windows you are not allowed
+to do this.
+
+There are several workarounds to this.
+\li \b Scripting: Despatch a script that does the work after the application is closed.
+This means deleting the old version, moveing the new one to location of the old and start the new one.
+A disadvantage of this approach is the need of a scripthost and the script needs to be able to get rid of himself.
+If the scripting language is not available on all target platforms a different one is needed on all platforms.
+\li \b Tools: Deploy tools that does the work of the script. Disadvantage of this approach is that the tools can not
+update themselfs and if they are deployed during the update process the new version would have to remove the deployed tools
+afterwards.
+\li \b Launch Parameters: As the application should restart after the update normally we move the new version in the application directory with a 
+defined filename. Then we launch the new version with a parameter and the name of the old application. This call waits till the old versions process
+is finished, deletes it and copies itself in its place. Last step is launching the "updated" application with a parameter that indicates it should remove
+its temporary version and work as normal after doing this.
+
+*/
+
+/*!
+
+\page kdupdaterdemo_updater_setup Package Setup
+\brief A short explanation how to setup a package.xml file
+for KDUpdater.
+ 
+\section kdupdaterdemo_updater_setuppackages packages.xml
+	The package.xml file format is described in \ref kdupdater_packagexml_fileformat.
+	For the kdupdaterdemo the following file was created.
+\verbatim
+<Packages>
+    <ApplicationName>kdupdaterdemo</ApplicationName>
+    <ApplicationVersion>1.0.0</ApplicationVersion>
+    <Package>
+        <Name>com.kdab.kdupdaterdemo</Name>
+        <Pixmap></Pixmap>
+        <Title>KDUpdater Demo</Title>
+        <Description>Installs the KDUpdater Demo.</Description>
+        <Version>1.0.0</Version>
+        <LastUpdateDate></LastUpdateDate>
+        <InstallDate>2010-06-03</InstallDate>
+        <Size>0</Size>
+        <Dependencies></Dependencies>
+    </Package>
+</Packages> 
+\endverbatim
+
+	The application name is freely chooseable and does not have to correlate
+	with the executeable name, but it should be a unique identifier if several
+	applications shall use the same repository. //TODO Application version.
+	
+	Title and Description are just human readable strings that the application may show to the user.
+	The size depends on the specific executable and is updated with the data from the repository if an
+	update is applied.
+	Then a component is defined that represents the current version of the application. Package names
+	should be unique and as a common rule urls composed of company url and application name 
+	are a good way to make the packagenames unique.	
+
+*/
+
+/*!
+
+\page kdupdaterdemo_updater_repository_setup Repository Setup
+ 
+\section updates Updates.xml
+
+The complete reference to the Updates.xml file can be found in \ref kdupdater_updatexml_fileformat.
+
+\verbatim
+<Updates>
+
+    <TargetName>kdupdaterdemo</TargetName>
+    <TargetVersion>1.0.0</TargetVersion>
+
+    <PackageUpdate>
+        <Name>com.kdab.kdupdaterdemo</Name>
+        <Description>Installs the KDUpdater Demo</Description>
+        <Version>1.1</Version>
+        <ReleaseDate>2010-06-06</ReleaseDate>
+        <UpdateFile platform-regex="Windows.*">kdupdaterdemo_win.kvz</UpdateFile>
+        <UpdateFile platform-regex="MacOSX.*">kdupdaterdemo_unix.kvz</UpdateFile>
+        <UpdateFile platform-regex="Linux.*">kdupdaterdemo_unix.kvz</UpdateFile>
+    </PackageUpdate>
+
+</Updates>
+\endverbatim
+
+This file describes to which application the package updates belong.
+And describes all package updates, including new Descriptions, Versions, etc.
+Most important after name and version tag is the UpdateFile tag which defines
+a regular expression that shall match an operating system and the compressed version of an update
+for that platform.
+ 
+\section package_building Package building
+
+This happens in two steps, first create the instructions
+how to apply the update, then how to create the kvz file.
+
+\subsection create_package_files Create the UpdateInstructions
+As learned before an update is defined through the name of its coresponding package, the new version of the package and the update file.
+This file contains a compressed folder containing the necessary data and an UpdateInstructions.xml file that defines how the update is installed.
+The reference for the options of an UpdateInstructions.xml file can be found at \ref kdupdater_updateinstructionsxml_fileformat.
+This is the UpdateInstructions.xml file for kdupdaterdemo on windows:
+
+\verbatim
+<UpdateInstructions>
+
+    <UpdateOperation>
+        <Name>Copy</Name>
+        <Arg>kdupdaterdemo.exe</Arg>
+        <Arg>{APPDIR}/kdupdaterdemotmp.exe</Arg>
+        <OnError>Abort</OnError>
+    </UpdateOperation>
+
+</UpdateInstructions>
+\endverbatim
+
+The file contains several operations that are instructions how to install the update.
+The complete list of operations and a tutorial how to add new ones
+is found at \ref kdupdater_updateoperationfactory.
+Windows needs its own file because windows executables need to have the ".exe" extension.
+Also note that the application is not replaced directly but gets a defined name which is hardcoded
+in the application to find the applicable updated executable. This is directly related to the
+file replacement problem on windows \ref kdupdaterdemo_selfupdate.
+
+\subsection package_compression Update file creation
+
+The final update file is created by placing the UpdateInstructions.xml and all files needed
+for the update a folder open a commandline/shell and run ufcreator with this directory as
+parameter. The Ouptut is the necessary .kvz file which is placed in the same directory as
+the Updates.xml. Now this folder is a working repository.
+
+*/
+

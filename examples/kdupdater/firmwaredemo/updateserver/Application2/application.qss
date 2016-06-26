@@ -1,0 +1,24 @@
+QToolBar {
+    background-color: beige;
+}
+
+QToolBar > QWidget {
+    background-color: beige;
+}
+
+QToolTip {
+    border: 2px solid darkkhaki;
+    padding: 5px;
+    border-radius: 3px;
+    background-color: beige;
+} 
+
+QTableView {
+    border: 0;
+    selection-background-color: darkkhaki;
+    background-color: beige;
+}
+
+QTableView > QWidget {
+    background-color: beige;
+}

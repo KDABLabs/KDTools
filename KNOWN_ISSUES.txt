@@ -1,0 +1,15 @@
+KDLogTextWidget
+------------------------
+
+- The 'lines' property isn't available in Designer from Qt 4.1.
+  This is due to a limitation of that designer version which does
+  not allow to edit QStringList properties.
+
+
+KDColorButton
+------------------------
+
+- The "Pick A Color From Screen" action fails to grab the mouse in Qt
+  versions 4.5.x (at least x <= 2) with debug output "grabMouse() failed
+  with \"GrabInvalidTime\". This is a regression in Qt 4.5, and has been
+  reported to Nokia Qt-Software.

@@ -1,0 +1,1076 @@
+// -*- mode:c++ -*-
+/*!
+  \page kdupdater_xmlfileformats KDUpdater - XML File Formats
+  \brief Documentation on the file formats of various XML files in KDUpdater
+
+  KDUpdater deals with the following types of XML Files
+
+  \li \subpage kdupdater_updatexml_fileformat UpdateXML - This file lists
+  out all the updates in a server site
+  \li \subpage kdupdater_updateinstructionsxml_fileformat
+  UpdateInstructionsXML - This file contains instructions that
+  need to be executed in order to install an update
+  \li \subpage kdupdater_packagexml_fileformat PackageXML - This file lists
+  all the packages associated with a client application. The file is
+  updated everytime an update is installed.
+  \li \subpage kdupdater_updatesources_fileformat UpdateSourcesXML - This
+  file lists out all the server sites from which updates can be
+  downloaded and installed.
+*/
+
+/*!
+
+\page kdupdater_updatexml_fileformat Update XML File Format
+
+\section kdupdater_updatexml_fileformat1 What is it?
+
+UpdateXML is used to refer to the Updates.xml file that is hosted 
+in the root directory of a server site. For example, a server site 
+http://www.kdab.net/kdexecutor/updates/ will have a file called 
+Updates.xml accessible via the URL 
+http://www.kdab.net/kdexecutor/updates/Updates.xml.
+
+It contains information about the updates hosted in a given server sit.
+
+\section kdupdater_updatexml_fileformat2 What does it contain?
+
+The UpdateXML file contains information about one or more updates hosted 
+in the server site under the following fields.
+
+\li Meta Information - This refers to some high-level information about
+the application for which updates are hosted in the server.
+\li Required Comptaibility Level - This refers to a baseline of the 
+client application against which updates in this server directory can
+be installed.
+\li Compatibility Update Information - This refers to the update that
+can be downloaded and installed to bring the client application to the
+required compatibility level (described above)
+\li Package Update Information - This refers to the update that can 
+be downloaded and installed on the client application.
+
+Against each package-update, the following information fields are made
+available.
+
+\li \b Name: Name of the update. Update names must be unique and must not 
+have spaces or special characters
+\li \b Title: Human readable title of the update.
+\li \b Description: A brief description of the update.
+\li \b Version and Release date.
+\li \b Dependencies: Names of the updates on which this update depends on. 
+This information will be used to evaluate a dependency tree. Care must 
+be taken to ensure that cyclic dependencies are not created.
+\li \b Update-file(s): Names of the files hosted in the server site 
+that provide this update. One update-file per operating-system, 
+hardware architecture should be specified. Additionally, every update file
+can contain information about it's compressed and uncompressed size in bytes.
+
+\section kdupdater_updatexml_fileformat3 Quick Example
+
+The best way to understand PackagesXML is by looking at an example. The 
+following example lists out updates available in a server for an application 
+called KDExecutor. Updates hosted in this server can be downloaded and
+installed by any KDExecutor client, provided its compatibility level is
+4. The UpdateXML file (below) also provides information about the update
+that can be downloaded and installed to bring the client KDExecutor to
+compatibility level 4.
+
+\verbatim
+<Updates>
+
+  <!-- Meta information about the software application for 
+       which these updates are hosted -->
+  <ApplicationName>KD Executor</ApplicationName>
+  <ApplicationVersion>2.0</ApplicationVersion>
+  <RequiredCompatLevel>4</RequiredCompatLevel>
+
+  <CompatUpdate>
+    <Level>4</Level>
+    <Description>Description of the compatibility level</Description>
+    <ReleaseDate>02/02/2008</ReleaseDate>
+    <UpdateFile
+platform-regex="Linux-i386" compressed-size="182739" uncompressed-size="200382">CompatUpdate-4-Linux-i386.kvz</UpdateFile>
+    <UpdateFile
+platform-regex="WindowsXP-i386" compressed-size="179305" uncompressed-size="200339">CompatUpdate-4-Win32-i386.kvz</UpdateFile>
+    <UpdateFile
+platform-regex="MaxOSX-i386" compressed-size="192539" uncompressed-size="2101952">CompatUpdate-4-Mac32-i386.kvz</UpdateFile>
+  </CompatUpdate>
+
+  <PackageUpdate>
+    <Name>ObjectInspectorPlugin</Name>
+    <Title>Object Inspector Plugin</Title>
+    <Description>This plugin helps in exploring objects and their relationships
+                 in an application.</Description>
+    <Version>3</Version>
+    <ReleaseDate>02/02/2008</ReleaseDate>
+    <Dependencies>
+      <DependsOn>Qt443</DependsOn>
+    </Dependencies>
+    <UpdateFile platform-regex="Linux-i386" compressed-size="1029383" uncompressed-size="2098305">OIP-Linux-i386.kvz</UpdateFile>
+    <UpdateFile platform-regex="WindowsXP-i386" compressed-size="1039483" uncompressed-size="2182058">OIP-Win32-i386.kvz</UpdateFile>
+    <UpdateFile platform-regex="MaxOSX-i386" compressed-size="1068237" uncompressed-size="2040295">OIP-Mac32-i386.kvz</UpdateFile>
+  </PackageUpdate>
+
+  <!-- More Update Entries -->
+
+</Updates>
+\endverbatim
+
+A quick look at the above example should help you to get started with your own
+UpdateXML files. The table below lists out the meaning and intent of each XML
+element in more detail.
+
+\section kdupdater_updatexml_fileformat4 Element Descriptions
+
+\htmlonly
+<table style="text-align: left; width: 100%;" border="0" cellpadding="5"
+cellspacing="0">
+<tbody>
+<tr>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">Updates</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">Root
+XML element for the UpdateXML file. There should be only one instance
+of this XML element. All other XML elements are contained within this
+one.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">ApplicationName<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Provides the name of the application on which updates
+contained in this XML file can be applied.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">ApplicationVersion<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Provides the version number of the application on which
+updates contained in this XML file can be applied.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">RequiredCompatLevel<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight:
+bold;">Integer:</span>
+Describes the client application baseline against which updates
+contained in this file can be applied. <br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">CompatUpdate</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">This
+XML element describes a compatibility Update<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Level<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">Integer:
+</span>The compatibility level of the update. <br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">Description<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Contains a textual description that can be shown on the
+client side before installing the update<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">ReleaseDate<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Date of release of the compatibility update. <span
+style="font-style: italic;">Should be in a format that
+QDate::fromString() can interpret.</span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">UpdateFile<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the Update File (a .kvz file) relative to the
+location of the Updates.xml file. <br>
+<br>
+Since KDUpdater is written for cross-platform use, it is possible to
+host different files for different Operating System and Architecture combinations.
+There can be several UpdateFile XML elements within CompatUpdate, one
+for each Arch, OS combination. This XML element can have tree attributes<br>
+<ul>
+<li>platform-regex (<span style="font-weight: bold;">String</span>) -
+Regular expression matching the \endhtmlonly \link KDUpdater::UpdateFinder::platformIdentifier platform identifier\endlink \htmlonly</li>
+<li>compressed-size (<span style="font-weight: bold;">Integer</span>) -
+Compressed size of the file<br>
+</li>
+<li>uncompressed-size (<span style="font-weight: bold;">Integer</span>) -
+Uncompressed size of the file<br>
+</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">PackageUpdate</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">This
+XML element describes a package update. <br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Name<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the package. The name of the update need not be
+human readable. It is advisable to not use spaces or any special
+characters in the name. Package names must be unique. If the same
+package is made available in different versions, then each should have
+a unique package name.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Title<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Title of the package. The title must be human readable, it
+can be shown by client applications to the user.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">Description<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Description of the package. It should atleast briefly
+describe what the package update contains.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Version<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Version number of the package update.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">ReleaseDate<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Date of release of the package update. <span
+style="font-style: italic;">Should be in a format that
+QDate::fromString() can interpret.</span></td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">Dependencies</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">XML
+element within which dependencies are listed<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">DependsOn<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the package on which this update depends.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">UpdateFile<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the Update File (a .kvz file) relative to the
+location of the Updates.xml file. <br>
+<br>
+Since KDUpdater is written for cross-platform use, it is possible to
+host different files for different Operating System and Architecture combinations.
+There can be several UpdateFile XML elements within PackageUpdate, one
+for each Arch, OS combination. This XML element can have two attributes<br>
+<ul>
+<li>platform-regex (<span style="font-weight: bold;">String</span>) -
+Regular expression matching the \endhtmlonly \link KDUpdater::UpdateFinder::platformIdentifier platform identifier\endlink \htmlonly</li>
+<li>compressed-size (<span style="font-weight: bold;">Integer</span>) -
+Compressed size of the file<br>
+</li>
+<li>uncompressed-size (<span style="font-weight: bold;">Integer</span>) -
+Uncompressed size of the file<br>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+\endhtmlonly
+
+*/
+
+/*!
+
+
+\page kdupdater_updateinstructionsxml_fileformat Update Instructions XML File Format
+
+Each update hosted on a server site has one or more Update-File(s) 
+associated with it. An update-file contains the files that make the 
+update.
+
+\section kdupdater_updateinstructionsxml_fileformat1 What is it?
+
+Among the files that make an update is a special file called 
+UpdateInstructions.xml. This XML file describes the sequence 
+of operations that must be performed on the client side to 
+actually install the update. These operations are performed 
+after the UpdateFile has been downloaded and uncompressed in 
+the client side. 
+
+The UpdateInstructions.xml file is referred to as UpdateInstructionsXML.
+
+\section kdupdater_updateinstructionsxml_fileformat2 What does it contain?
+
+A typical UpdateInstructionsXML contains a sequence of Update-Instructions 
+that are executed for installing the update. Update operations can be any
+one of the following
+
+\li File Copy - \c Copy
+\li File Move - \c Move
+\li File Remove - \c Delete
+\li Make Directory - \c Mkdir
+\li Remove Directory - \c Rmdir
+\li Append File - \c AppendFile
+\li Prepend File - \c PrependFile
+\li Execute Program - \c Execute
+\li Update Package - \c UpdatePackage
+\li Update Compatibility Level - \c UpdateCompat
+
+Each of the above operations may accept one or more parameters. The
+UpdateInstructionsXML
+will be read by KDUpdater on the client side and operations contained in the 
+XML file are read one after the other and executed.
+
+Over and above the Update Operations listed above, developers can register more
+update operations. Read \ref KDUpdater::UpdateOperationFactory for more
+information.
+
+\section kdupdater_updateinstructionsxml_fileformat3 Quick Example
+
+Shown below is an example of an UpdateInstructions.xml file. It contains
+instructions
+to perform the following 
+
+\li Copy objectinspectorplugin.dll from the update-file to the bin directory 
+of the KDExecutor application.
+\li Copy objectinspectorplugininfo.xml from the update-file to the bin/info
+directory 
+of the KDExecutor application.
+\li Execute RegisterPlugin command to register the ObjectInspectorPlugin with 
+KDExecutor.
+
+\verbatim
+<UpdateInstructions>
+
+    <UpdateOperation>
+        <Name>Copy</Name>
+        <Arg>objectinspectorplugin.dll</Arg>
+        <Arg>${APPDIR}/bin/objectinspectorplugin.dll</Arg>
+        <OnError>Abort</OnError>
+    </UpdateOperation>
+
+    <UpdateOperation>
+        <Name>Copy</Name>
+        <Arg>objectinspectorplugininfo.xml</Arg>
+        <Arg>${APPDIR}/bin/info/objectinspectorplugininfo.xml</Arg>
+        <OnError>Abort</OnError>
+    </UpdateOperation>
+
+    <UpdateOperation>
+        <Name>RegisterPlugin</Name>
+        <Arg>ObjectInspectorPlugin</Arg>
+        <Arg>objectinspectorplugin.dll</Arg>
+        <OnError>Abort</OnError>
+    </UpdateOperation>
+
+</UpdateInstructions>
+\endverbatim
+
+The UpdateInstructionsXML is basically a script, but in XML.
+
+\section kdupdater_updateinstructionsxml_fileformat4 Element Descriptions
+
+\htmlonly
+<table style="text-align: left; width: 100%;" border="0" cellpadding="5"
+cellspacing="0">
+<tbody>
+<tr>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">UpdateInstructions</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">Root
+XML elemnent for the UpdateInstructionsXML file. There should be only
+one instance
+of this XML element. All other XML elements are contained within this
+one.</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">UpdateOperation</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Name<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the update operation. Only one instance of Name
+XML element is valid within UpdateOperation. The following in-built
+update operations are available<br>
+<ul>
+<li>Copy</li>
+<li>Move</li>
+<li>Delete</li>
+<li>Mkdir</li>
+<li>Rmdir</li>
+<li>AppendFile</li>
+<li>PrependFile</li>
+<li>Execute</li>
+<li>UpdatePackage</li>
+<li>UpdateCompat</li>
+</ul>
+The string contained in <span style="font-weight: bold;">Name</span>
+should be same as the value returned by <span
+style="font-weight: bold;">KDUpdater::UpdateOperation::name(). </span><br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Arg<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>One or more of instances of Arg XML element can be
+contained within UpdateOperation. Values contained within Arg are
+passed as argument in the same order as specified in the file.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">OnError<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>An action that needs to be taken when an error is
+encountered while executing the update-operation. Currently only the
+following values are supported<br>
+<ul>
+<li>Abort</li>
+<li>Continue</li>
+<li>AskUser<br>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+\endhtmlonly
+
+*/
+
+/*!
+
+\page kdupdater_packagexml_fileformat Package XML File Format
+
+\section kdupdater_packagexml_fileformat1 What is it?
+
+PackageXML describes the packages that have been currently installed 
+in the client. This XML file is very important because it is used by 
+the UpdateClient to compute the updates that can be installed. 
+
+The initial PackageXML file has to be written by the developer and 
+deployed along with the application. From then on KDUpdater takes
+care of automatically updating it when ever a new update is installed.
+
+PackageXML is a file called Packages.xml that is usually stored along
+with the other configuration files of the application. Its location
+can be specified using \ref KDUpdater::Application::packagesXMLFileName
+
+\section kdupdater_packagexml_fileformat2 What does it contain?
+
+PackageXML file contains information about packages installed in the 
+application. Package could be a component, configuration file, script
+or a bundle of those. Package is any logical group of files that 
+add value to the application.
+
+For a image viewer application, the packages could be
+
+\li Main Application 
+\li Image Browser
+\li Thumbnail Image Viewer
+\li Coverflow Viewer
+\li Image Filter 
+
+and so on..
+
+The PackageXML contains the following fields of information about the
+application itself.
+
+\li ApplicationName
+\li ApplicationVersion
+\li CompatLevel
+
+It contains the following information fields about each package.
+
+\li Name
+\li Title
+\li Description
+\li Version
+\li LastUpdateDate
+\li InstallDate
+
+\section kdupdater_packagexml_fileformat3 Quick Example
+
+\verbatim
+<Packages>
+
+    <ApplicationName>SimpleExample</ApplicationName>
+    <ApplicationVersion>1.0</ApplicationVersion>
+    <CompatLevel>1</CompatLevel>
+
+    <Package>
+        <Name>MainWindow</Name>
+        <Title>The main window of the application</Title>
+        <Version>0.0</Version>
+        <LastUpdateDate>2008-04-09</LastUpdateDate>
+        <InstallDate>2008-04-09</InstallDate>
+    </Package>
+
+    <Package>
+        <Name>LicenseText</Name>
+        <Title>Set of related text files</Title>
+        <Version>0.0</Version>
+        <Description>This package contains license text for the
+application.</Description>
+        <LastUpdateDate>2008-04-09</LastUpdateDate>
+        <InstallDate>2008-04-09</InstallDate>
+    </Package>
+
+</Packages>
+
+\endverbatim
+
+\section kdupdater_packagexml_fileformat4 Element Descriptions
+
+\htmlonly
+<table style="text-align: left; width: 100%;" border="0" cellpadding="5"
+cellspacing="0">
+<tbody>
+<tr>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">Packages</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">Root
+XML Element for the PackageXML file. All other elements are contained
+in this XML element. <br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">ApplicationName<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the application for which the packages are listed
+in this file<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">ApplicationVersion<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Version number of the application for which the packages
+are listed in this file.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">CompatLevel<br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">Integer:
+</span>A compatibility level number. All packages are installed
+and configured to work at this compatibility level. It is not possible
+to install updates from a higher compatibility level.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><span
+style="font-weight: bold;">Package</span><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">Describes
+a single package.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Name<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the package<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Title<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Human readable title of the package.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Version<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Version number of the package<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">Description<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:</span>
+A brief description of the package.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">LastUpdateDate<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Date when the package was last updated. This string can be
+converted to QDate using the QDate::fromString() method.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255,
+204);">InstallDate<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String</span>:
+Date when the package was installed. This string can be converted to
+QDate using the QDate::fromString() method<br>
+</td>
+</tr>
+</tbody>
+</table>
+
+\endhtmlonly
+
+*/
+
+/*!
+
+\page kdupdater_updatesources_fileformat Update Sources XML File Format
+
+\section kdupdater_updatesources_fileformat1 What is it?
+
+The UpdateSourcesXML file describes the sources from where updates can be downloaded from. 
+It is a file that goes by the name UpdateSources.xml and is usually stored in the same
+directory as other configuration files. Its location can be specified using 
+\ref KDUpdater::Application::updateSourcesXMLFileName.
+
+\section kdupdater_updatesources_fileformat2 What does it contain?
+
+It contains information about server locations from where updates can be downloaded. Against
+each server location the following information fields are available
+
+\li Name 
+\li Title
+\li Description
+\li Url
+\li Priority
+
+\section kdupdater_updatesources_fileformat3 Quick Example
+
+\verbatim
+<UpdateSources>
+
+  <UpdateSource>
+
+    <Name>KDABUpdateServer</Name>
+    <Title>Updates from KDAB</Title>
+    <Description></Description>
+    <Url>https://www.kdab.net/updates/kdexecutor</Url>
+    <Priority>1</Priority>
+    
+  </UpdateSource>
+
+  <UpdateSource>
+
+    <Name>ABCUpdateServer</Name>
+    <Title>Updates from ABC</Title>
+    <Description></Description>
+    <Url>https://www.abc.com/updates/kdexecutor</Url>
+    <Priority>2</Priority>
+
+  </UpdateSource>
+  
+</UpdateSources>
+\endverbatim
+
+\section kdupdater_updatesources_fileformat4 Element Descriptions
+
+\htmlonly
+<table style="text-align: left; width: 100%;" border="0" cellpadding="5"
+cellspacing="0">
+<tbody>
+<tr>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">UpdateSources<br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">Root
+XML Element for the UpdateSourcesXML file. All other XML elements are
+contained in this XML element.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">UpdateSource<br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(204, 204, 255);">Contains
+information about a single update-source<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Name<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Name of the update source<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Title<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:
+</span>Human readable title for the update source. This can be
+shown to the user by client applications<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Description<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:</span>
+Human readable description of the update source.<br>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Url<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">String:</span>
+The complete URL of the update source. It should be possible to use
+QUrl(QString) to initialize a QUrl based on the string. Examples of
+valid URLs are <br>
+<ul>
+<li>http://www.kdab.net/updates/kdexecutor <span
+style="font-style: italic;">provided </span>http://www.kdab.net/updates/kdexecutor/Updates.xml
+can be found<br>
+</li>
+<li>http://www.abc.com/updates/kdexecutor <span
+style="font-style: italic;">provided&nbsp;</span>http://www.abc.com/updates/kdexecutor/Updates.xml
+can be found</li>
+<li>file:///C:/Updates/KDExecutor <span
+style="font-style: italic;">provided </span>file:///C:/Updates/KDExecutor/Updates.xml
+can be found</li>
+<li>file:///usr/local/Updates/KDExecutor <span
+style="font-style: italic;">provided </span>file:///usr/local/Updates/KDExecutor/Updates.xml
+can be found</li>
+</ul>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><br>
+</td>
+<td style="vertical-align: top;"><br>
+</td>
+<td
+style="vertical-align: top; background-color: rgb(255, 255, 204);">Priority<br>
+</td>
+<td style="vertical-align: top;"><span style="font-weight: bold;">Unsigned
+Integer: </span>Priority associated with the update source. Lower the
+number, higher the priority. If two or more update sources are
+providing the same update, then the one coming from a high priority
+update server is preferred.<span style="font-weight: bold;"><br>
+</span></td>
+</tr>
+</tbody>
+</table>
+
+\endhtmlonly
+
+*/
+
+
+

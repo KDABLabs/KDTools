@@ -1,0 +1,42 @@
+# This file was generated automatically.
+# Please edit generate-configure.sh/autogen.py rather than this file.
+
+#message( "Checking for platform versions in $$_PRO_FILE_PWD_" )
+
+for( SRC, $$list($$SOURCES) ) {
+
+	kdt_file = $$SRC
+
+	unix {
+		kdt_file_unix = $$kdt_file
+		kdt_file_unix ~= s/([^.]+)\\.(.+)/\\1_unix.\\2/
+		exists( $$_PRO_FILE_PWD_/$$kdt_file_unix ):SOURCES_EXTRA += $$kdt_file_unix
+	}
+
+	win32 {
+		kdt_file_win = $$kdt_file
+		kdt_file_win ~= s/([^.]+)\\.(.+)/\\1_win.\\2/
+		exists( $$_PRO_FILE_PWD_/$$kdt_file_win ):SOURCES_EXTRA += $$kdt_file_win
+	}
+
+	macx {
+		kdt_file_mac = $$kdt_file
+		kdt_file_mac ~= s/([^.]+)\\.(.+)/\\1_mac.\\2/
+		exists( $$_PRO_FILE_PWD_/$$kdt_file_mac ):SOURCES_EXTRA += $$kdt_file_mac
+
+		# find also basename_mac.mm (Obj-C++) files:
+		kdt_file_mac = $$kdt_file
+		kdt_file_mac ~= s/([^.]+)\\.(.+)/\\1_mac.mm/
+		exists( $$_PRO_FILE_PWD_/$$kdt_file_mac ):SOURCES_EXTRA += $$kdt_file_mac
+	}
+
+	unix:!macx {
+		kdt_file_x11 = $$kdt_file
+		kdt_file_x11 ~= s/([^.]+)\\.(.+)/\\1_x11.\\2/
+		exists( $$_PRO_FILE_PWD_/$$kdt_file_x11 ):SOURCES_EXTRA += $$kdt_file_x11
+	}
+
+}
+
+#message( "found these extra platform files: $$SOURCES_EXTRA" )
+SOURCES += $$SOURCES_EXTRA

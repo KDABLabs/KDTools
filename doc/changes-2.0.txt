@@ -1,0 +1,52 @@
+KDTools 2 is being developed from scratch. Many classes from KDTools 1
+have been superseeded by Qt 4. Where KDTools 1 classes still make
+sense in Qt 4, we are in the process of porting and redesigning them,
+and they are expected to return in future KDTools 2 releases.
+
+Some of the major new features and advantages in KDTools 2.0 are: 
+
+New Classes
+===========
+
+* KDSignalBlocker (Core)
+  Exception-safe and convenient wrapper around QObject::blockSignals().
+* KDSignalSpy (Core)
+  QSignalSpy that records all signals emitted from an object (or list
+  of object).
+* KDLog/KDLogDevice (Core)
+  Redesigned KDLogger. See porting.txt for details. 
+* KDRect (Core)
+  Rectangle convenience functions. 
+* KDPainterSaver (Gui)
+  Exception-safe and convenient wrapper around
+  QPainter::save()/restore(). 
+* KDOverriderCursor (Gui)
+  Exception-safe and convenient wrapper around
+  QApplication::setOverrideCursor().
+* KDColorButton (Gui)
+  A color display and selection widget.
+* KDLogTextWidget (Gui)
+  High-speed text display widget to replace Qt3's QTextEdit::LogText
+  mode.
+* KDPropertyView (Gui)
+  A property browser component.
+* KDShortcutBar (Gui)
+  This widget provides a vertical list of buttons, one for each
+  shortcut, and an area that displays a widget for each shortcut.
+  The list of buttons and the widget area are separated by a splitter.
+  The list of buttons can be contracted and expanded to display more
+  or less buttons by the user.
+* KDTimeLineArea (Gui)
+  A widget that shows events in a timeline. 
+
+Build System / Packaging
+========================
+
+KDTools is now separated into KDToolsCore (depending only on QtCore)
+and KDToolsGui (depending on QtGui) libraries. It has a new build
+system, and can be used from qmake-based projects with, e.g.,
+
+  CONFIG += kdtools
+  KDTOOLS = core gui
+
+as a consequence.

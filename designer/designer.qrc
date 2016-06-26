@@ -1,0 +1,5 @@
+<!DOCTYPE RCC><RCC>
+<qresource prefix="/.__kdab__/kdtools/icons/designer">
+	<file alias="kdab-small.png">../images/kdab-small.png</file>
+</qresource>
+</RCC>

@@ -1,0 +1,8 @@
+<UpdateSources>
+ <UpdateSource>
+ <Name>LocalSource</Name>
+ <Title>Local Update Source</Title>
+ <Description>Update source from the local file system</Description>
+ <Url>file:///@KDTOOLS_BASE@/tests/data/updates/updateserver</Url>
+ </UpdateSource>
+</UpdateSources>

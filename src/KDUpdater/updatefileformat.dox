@@ -1,0 +1,144 @@
+/**
+\page kdupdater_updatefileformat KDUpdater - UpdateFile Format
+
+\section kdupdater_updatefileformat_intro Introduction
+
+A typical update consists of one or more files that should be copied into the
+application directory(ies) and/or system directory(ies) during the installation
+of the update. All of these files have to be compressed into a single file and
+served as such; this single file is called UpdateFile.
+
+
+\htmlonly
+<center><table border="0" width="80%"><tr>
+<td bgcolor="#ddddff" width="20px"></td>
+<td width="*"><strong>Definition:<br><font color="blue">
+An UpdateFile is a compressed file that contains all the files and
+directories required for installing the update on the client. Each UpdateFile
+contains the file(s) required for installing that update. Update dependencies
+can be used to provide dependent files if needed.
+</font></strong></td></tr></table></center>
+\endhtmlonly
+
+\section kdupdater_updatefileformat_structure Structure of the UpdateFile
+
+The UpdateFile basically contains two types blocks of data
+
+\li One UpdateFileHeader structure represented by the KDUpdater::UFHeader struct
+\li Followed by a series of UpdateFileEntry structures represented by KDUpdater::UFEntry struct
+
+The image below gives a visual representation of an UpdateFile
+
+\image html kdupdater_updatefileillustration2.png
+
+\note The files are written and read via a QDataStream using big endian byte order in version 8. See the QDataStream documentation for details.
+
+The following subsections explain UFHeader and UFEntry structures in more detail
+
+\subsection kdupdater_updatefileheader_ufheader UFHeader
+
+The update file header describes the contents of the update file interms of file
+names, their permissions and directory entry flags. The update header consists
+of the following fields.
+
+\htmlonly
+<table border="1" width="100%">
+
+    <tr>
+        <td width="10%"><strong>Field Name</strong></td>
+        <td width="10%"><strong>Field Data Type</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+
+    <tr>
+        <td width="10%">Magic</td>
+        <td width="10%"><code>QString</code></td>
+        <td>A magic string that is used to identify the file type. Has to be &quot;KDVCLZ&quot;</td>
+    </tr>
+
+    <tr>
+        <td width="10%">FileList</td>
+        <td width="10%"><code>QStringList</code></td>
+        <td>A list of file names of files and directories contained in the
+        UpdateFile. It should be noted here that, in this list, directory names
+        must appear before the names of files contained in them.
+
+        For example consider the directory structure shown in the screenshot
+        below.
+\endhtmlonly
+
+\image html kdupdater_updatefileillustration1.png
+
+\htmlonly
+        The FileList for the above directory would contain the following strings
+        <ul>
+         <li>admin</li>
+         <li>internal</li>
+         <li>internal/KD_Updater_SDS.odt</li>
+         <li>internal/KD_Updater_SRD.pdf</li>
+         <li>internal/KD_Updater_SRS.odt</li>
+         <li>kdupdater</li>
+        </ul>
+        </td>
+    </tr>
+
+    <tr>
+        <td width="10%">PermList</td>
+        <td width="10%"><code>QList&lt;quint64&gt;</code></td>
+        <td>Contains an associative (with respect to FileList) list of integers
+        describing the access permissions for different files/directories in the
+        update file.</td>
+    </tr>
+
+    <tr>
+        <td width="10%">IsDirList</td>
+        <td width="10%"><code>QList&lt;bool&gt;</code></td>
+        <td>Contains an associative (with respect to FileList) list of boolean
+        values flagging names in FileList as directory names or file names.</td>
+    </tr>
+
+</table>
+\endhtmlonly
+
+\subsection kdupdater_updatefilecontents_ufentry UFEntry
+
+After the header, the contents of the UpdateFile is stored. The content can be
+thought of as an array of UFEntry structures. Each UFEntry structure contains data 
+of a single file in terms of the following fields.
+
+\htmlonly
+<table border="1" width="100%">
+
+    <tr>
+        <td width="10%"><strong>Field Name</strong></td>
+        <td width="10%"><strong>Field Data Type</strong></td>
+        <td><strong>Description</strong></td>
+    </tr>
+    
+    <tr>
+        <td width="10%">FileName</td>
+        <td width="10%"><code>QString</code></td>
+        <td>Name of the file described in this entry. This 
+        string name should be one of the names contained in 
+        the UpdateFileHeader.FileList.</td>
+    </tr>
+
+    <tr>
+        <td width="10%">Permissions</td>
+        <td width="10%"><code>quint64</code></td>
+        <td>Permissions of the file stored as a bit-field value.</td>
+    </tr>
+
+    <tr>
+        <td width="10%">FileData</td>
+        <td width="10%"><code>QByteArray</code></td>
+        <td>Contents of the file compressed using ZLib compression.</td>
+    </tr>
+
+</table>
+\endhtmlonly
+
+\note It must be noted at this point that an UFEntry can only contain information 
+about a file and not a directory.
+
+*/ 

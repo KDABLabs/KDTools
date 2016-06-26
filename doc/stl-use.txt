@@ -1,0 +1,14 @@
+Algorithms
+==========
+std::max_element
+	KDLogTextWidget
+std::lexicographical_compare
+	kdtoolsglobal.cpp
+std::equal
+	kdtoolsglobal.cpp
+
+Containers
+==========
+
+Other
+==========

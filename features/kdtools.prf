@@ -1,0 +1,151 @@
+!kdtools_target:KDTOOLS_INSTALL_PREFIX = $$PWD/../.. # installed in mkspecs/features
+
+### Change this when releasing KDTools 3.0.0
+KDTOOLS_MAJOR_VERSION = 2
+
+isEmpty(KDTOOLS) {
+    isEmpty(QT):KDTOOLS = core gui
+    else:KDTOOLS = $$QT
+}
+
+# manage dependencies of KDTools libs amongst themselves:
+contains( KDTOOLS, updater ):KDTOOLS *= core
+
+for( lib, $$list($$lower($$unique(KDTOOLS))) ) {
+    isEqual( lib, coreex ):QT *=
+    else:isEqual( lib, guiex ):QT *=
+    else:isEqual( lib, none ):QT *=
+    else:isEqual( lib, unittest ):QT *=
+    else:isEqual( lib, updater ):QT *= xml network gui
+    else:QT *= $$lib
+}
+
+# qt.prf forces it's INCLUDEPATH and LIBS additions into the front, so
+# we force loading here, so ours don't get overwritten
+load(qt)
+
+# reorder to match dependencies in static linking:
+TMPLIBS = \
+        webkit \
+        phonon \
+        dbus \
+        testlib \
+        script \
+        scripttools \
+        updater \
+        svg \
+        canvas \
+        qt3support \
+        sql \
+        xmlpatterns \
+        xml \
+        opengl \
+        guiex \
+        gui \
+        network \
+        coreex \
+        core \
+        unittest \
+        none
+
+for( lib, $$list($$TMPLIBS) ) {
+	contains( KDTOOLS, $$lib ):KDTOOLS_ORDERED += $$lib
+}
+KDTOOLS_UNKNOWN = $$KDTOOLS
+KDTOOLS_UNKNOWN -= $$KDTOOLS_ORDERED
+KDTOOLS = $$KDTOOLS_ORDERED
+for( lib, $$list($$KDTOOLS_UNKNOWN) ) {
+        !contains( TMPLIBS, $$lib ):message("Warning: unknown KDTOOLS module: $$lib")
+}
+unset(KDTOOLS_UNKNOWN)
+
+KDTOOLS_LIBS =
+# scan KDTOOLS and add libs and (for ourselves) include paths.
+for( lib, $$list($$lower($$unique(KDTOOLS))) ) {
+	qlib =
+	isEqual( lib, none ):qlib            = # none
+	else:isEqual( lib, unittest ):qlib   = KDUnitTest
+	else:isEqual( lib, core ):qlib       = KDToolsCore
+	else:isEqual( lib, coreex ):qlib     = KDToolsCoreEx
+	else:isEqual( lib, network ):qlib    =
+	else:isEqual( lib, gui  ):qlib       = KDToolsGui
+	else:isEqual( lib, guiex  ):qlib     = KDToolsGuiEx
+	else:isEqual( lib, opengl ):qlib     =
+	else:isEqual( lib, xml ):qlib        = 
+	else:isEqual( lib, xmlpatterns ):qlib= 
+	else:isEqual( lib, sql ):qlib        =
+	else:isEqual( lib, qt3support ):qlib =
+	else:isEqual( lib, canvas ):qlib     =
+	else:isEqual( lib, svg ):qlib        =
+	else:isEqual( lib, updater ):qlib    = KDUpdater
+	else:isEqual( lib, scripttools ):qlib=
+	else:isEqual( lib, script ):qlib     =
+	else:isEqual( lib, testlib ):qlib    =
+	else:isEqual( lib, dbus ):qlib       =
+	else:isEqual( lib, phonon ):qlib     =
+	else:isEqual( lib, webkit ):qlib     =
+	else:message("Unknown KDTOOLS module: $$lib")
+
+	!isEmpty( qlib ) {
+
+		kdtools_target {
+			# force our includes in front of Qt's so we don't pick up stale include
+			INCLUDEPATH = $$PWD/../include/$$qlib $$INCLUDEPATH
+			DEPENDPATH += $$PWD/../include/$$qlib
+		} else {
+			INCLUDEPATH += $$KDTOOLS_INSTALL_PREFIX/include/$$qlib
+			DEPENDPATH += $$KDTOOLS_INSTALL_PREFIX/include/$$qlib
+		}
+
+		KDTOOLS_LIB_TYPE_SUFFIX=""
+		KDTOOLS_LIB_VERSION_SUFFIX=""
+		win32{
+                        CONFIG( shared, static|shared ) {
+                            KDTOOLS_LIB_VERSION_SUFFIX=$$KDTOOLS_MAJOR_VERSION
+                        }
+		}
+		CONFIG( debug, debug|release ) {
+			# append the debug tag
+			win32{
+				CONFIG( shared, static|shared ) {
+					KDTOOLS_LIB_TYPE_SUFFIX="d"
+				}
+			}
+			# the following is only used in Qt versions < 4.2.x:
+			else {
+				!contains($$list($$[QT_VERSION]), 4.[2-9].*) {
+					KDTOOLS_LIB_TYPE_SUFFIX="_debug"
+				}
+			}
+		}
+
+		KDTOOLS_LIBS += -l$$qlib$$KDTOOLS_LIB_TYPE_SUFFIX$$KDTOOLS_LIB_VERSION_SUFFIX
+	}
+
+}
+
+# KDT libs are more specific than Qt ones, so they need to come first
+# (at least when linking statically):
+LIBS = $$KDTOOLS_LIBS $$LIBS
+
+contains( KDTOOLS, gui ) {
+    macx:LIBS += -framework Carbon -framework AppKit -lz -lm -framework ApplicationServices
+}
+
+kdtools_target {
+	# force our includes in front of Qt's so we don't pick up stale include
+	INCLUDEPATH   = $$PWD/../include $$INCLUDEPATH
+	DEPENDPATH   += $$PWD/../include
+	QMAKE_LIBDIR  = $$PWD/../lib $$QMAKE_LIBDIR
+} else {
+	INCLUDEPATH  += $$KDTOOLS_INSTALL_PREFIX/include
+	DEPENDPATH   += $$KDTOOLS_INSTALL_PREFIX/include
+	QMAKE_LIBDIR += $$KDTOOLS_INSTALL_PREFIX/lib # allow other install dirs?
+}
+
+CONFIG( shared, static|shared ) {
+	DEFINES += KDTOOLS_SHARED
+} else { 
+	# Needed by KDToolsCore (in kdlog_win.cpp):
+	win32:!win32-g++:LIBS += advapi32.lib
+}

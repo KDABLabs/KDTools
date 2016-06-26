@@ -1,0 +1,2 @@
+/designer/libkdtools_designer_plugin
+/designer/kdtools_designer_plugin
