@@ -48,5 +48,5 @@ Please visit http://www.kdab.com to meet the people who write code like this.
 
 
 KD TOOLS and the KD TOOLS logo are registered trademarks of Klaralvdalens Datakonsult AB
-in the European Union, the Unites States, and/or other countries.  Other product and
+in the European Union, the United States, and/or other countries.  Other product and
 company names and logos may be trademarks or registered trademarks of their respective companies.
