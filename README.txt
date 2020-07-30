@@ -1,3 +1,5 @@
+** NOTE: This Project is no longer supported or maintained by KDAB. The code is kept here for historical reasons and the hopes that it proves useful to those still using Qt4. **
+
 Introduction
 ============
 KD Tools aims to ease the daily work of Qt programmers by providing a number
