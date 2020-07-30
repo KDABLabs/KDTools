@@ -1,4 +1,4 @@
-** NOTE: This Project is no longer supported or maintained by KDAB. The code is kept here for historical reasons and the hopes that it proves useful to those still using Qt4. **
+# NOTE: This Project is no longer supported or maintained by KDAB. The code is kept here for historical reasons and the hopes that it proves useful to those still using Qt4
 
 Introduction
 ============
