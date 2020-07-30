@@ -1,4 +1,4 @@
-# NOTE: This Project is no longer supported or maintained by KDAB. The code is kept here for historical reasons and the hopes that it proves useful to those still using Qt4
+## NOTE: This Project is no longer supported or maintained by KDAB. The code is kept here for historical reasons and the hopes that it proves useful to those still using Qt4
 
 Introduction
 ============
@@ -15,7 +15,6 @@ See INSTALL.txt for installation instructions.
 
 You will find more information in these places:
 
-  detailed browsable API reference:   http://docs.kdab.com/kdtools
   our sorted example programs:        examples/
 
 Contact
